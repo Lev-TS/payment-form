@@ -1,74 +1,88 @@
 import { z } from "zod";
 
+import { parseLocalizedNumber } from "@/lib/utils";
+
 import { GetPaymentFormSchemaFnArgs } from "./types";
 
-export const getPaymentFormSchema = ({ lang, payerAccounts, dict }: GetPaymentFormSchemaFnArgs) =>
+export const getPaymentFormSchema = ({ lang, payerAccountsWithPositiveBalance, dict }: GetPaymentFormSchemaFnArgs) =>
   z
     .object({
-      payeeAccount: z.string().min(1, "Required"),
+      payeeAccount: z
+        .string()
+        .min(1, "This field is required")
+        .transform((userInput, context) => {
+          const trimmedInput = userInput.trim();
+
+          if (userInput.length < 15 || userInput.length > 34) {
+            context.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Please enter valid IBAN",
+            });
+
+            return z.NEVER;
+          }
+
+          return trimmedInput;
+        }),
       amount: z
         .string()
-        .transform((val, ctx) => {
-          const parsed = parseFloat(val);
+        .transform((userInput, context) => {
+          const parsedInput = parseLocalizedNumber(userInput);
 
-          if (isNaN(parsed)) {
-            ctx.addIssue({
+          if (isNaN(parsedInput)) {
+            context.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Should be a number",
+              message: "Please enter valid number",
             });
 
             return z.NEVER;
           }
 
-          if (parsed < 0.01) {
-            ctx.addIssue({
+          if (parsedInput < 0.01) {
+            context.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Min 1 cent",
+              message: "Minimum payment is: " + (0.01).toLocaleString(lang),
             });
 
             return z.NEVER;
           }
 
-          return parsed;
-
-          return parsed.toLocaleString(lang, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          });
+          return parsedInput;
         })
-        .or(z.number().min(0.01, "Min 1 cent")),
+        .or(z.number().min(0.01, "Minimum payment is: " + (0.01).toLocaleString(lang))),
       purpose: z
         .string()
-        .max(135, { message: "Max 135 letters" })
-        .transform((val, ctx) => {
-          if (val.length < 1) {
-            ctx.addIssue({
+        .max(135, { message: "Please shorten (max 135 symbols)" })
+        .transform((userInput, context) => {
+          if (userInput.length < 1) {
+            context.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Required",
+              message: "This field is required",
             });
 
             return z.NEVER;
           }
 
-          if (val.length < 3) {
-            ctx.addIssue({
+          if (userInput.length < 3) {
+            context.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Min 3 letters",
+              message: "Please provide valid description",
             });
 
             return z.NEVER;
           }
 
-          return val;
+          return userInput;
         }),
-      payerAccount: z.string().min(1, "Required"),
-      payee: z.string().min(1, "Required").max(70, "Max 70 letters"),
+      payerAccount: z.string().min(1, "This field is required"),
+      payee: z.string().min(1, "This field is required").max(70, "Please shorten (max 70 symbols)"),
     })
     .refine(
       (schema) => {
-        const selectedAccount = payerAccounts.find((account) => account.iban === schema.payerAccount);
-
+        const selectedAccount = payerAccountsWithPositiveBalance.find(
+          (account) => account.iban === schema.payerAccount,
+        );
         return selectedAccount && selectedAccount.balance >= Number(schema.amount);
       },
-      { message: "Insufficient funds on your account", path: ["amount"] },
+      { message: "Not enough money on your account", path: ["amount"] },
     );

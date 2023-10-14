@@ -1,21 +1,29 @@
 import { z } from "zod";
 
 import type { Locale } from "@/i18n.config";
-import type { PayerAccounts } from "@/lib/api.types";
-import { getDictionary } from "@/lib/dictionary.utils";
+import { getDictionary } from "@/lib/server.utils";
 
 import { getPaymentFormSchema } from "./schema";
 
 type Dict = Awaited<ReturnType<typeof getDictionary>>["pages"]["home"];
 
+export interface PayerAccount {
+  id: string;
+  iban: string;
+  balance: number;
+}
+
+export type PayerAccounts = PayerAccount[];
+
 export interface PaymentFormProps {
-  payerAccounts: PayerAccounts;
+  payerAccountsWithPositiveBalance: PayerAccounts;
+  defaultPayerAccount: PayerAccount;
   dict: Dict;
 }
 
 export interface GetPaymentFormSchemaFnArgs {
   lang: Locale;
-  payerAccounts: PayerAccounts;
+  payerAccountsWithPositiveBalance: PayerAccounts;
   dict: Dict;
 }
 

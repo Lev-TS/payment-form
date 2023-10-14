@@ -4,7 +4,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 
 import { useLang } from "@/hooks/useLang";
-import { validateIban } from "@/lib/api.utils";
+import { validateIban } from "@/lib/client.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { PaymentFormDataType, PaymentFormProps } from "./types";
@@ -18,10 +18,14 @@ import { SubmitButton } from "../SubmitButton/component";
 import { getPaymentFormSchema } from "./schema";
 import { toast } from "../ui/use-toast";
 
-export const PaymentForm: React.FC<PaymentFormProps> = ({ payerAccounts, dict }) => {
+export const PaymentForm: React.FC<PaymentFormProps> = ({
+  defaultPayerAccount,
+  payerAccountsWithPositiveBalance,
+  dict,
+}) => {
   const lang = useLang();
 
-  const PaymentFormSchema = getPaymentFormSchema({ lang, dict, payerAccounts });
+  const PaymentFormSchema = getPaymentFormSchema({ lang, dict, payerAccountsWithPositiveBalance });
 
   const form = useForm<PaymentFormDataType>({
     resolver: zodResolver(PaymentFormSchema),
@@ -29,7 +33,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ payerAccounts, dict })
       amount: 0,
       payeeAccount: "",
       purpose: "",
-      payerAccount: "",
+      payerAccount: defaultPayerAccount.iban,
       payee: "",
     },
   });
@@ -85,22 +89,25 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ payerAccounts, dict })
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {payerAccounts.map(
-                            (account) =>
-                              account.balance > 0 && (
-                                <SelectItem value={account.iban} key={account.id}>
-                                  <div>Account: {account.iban}</div>
-                                  <div className="float-left">Balance: {account.balance.toLocaleString(lang)}</div>
-                                </SelectItem>
-                              ),
-                          )}
+                          {payerAccountsWithPositiveBalance.map((account) => (
+                            <SelectItem value={account.iban} key={account.id}>
+                              <div>Account: {account.iban}</div>
+                              <div className="float-left">
+                                Balance:{" "}
+                                {account.balance.toLocaleString(lang, {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}
+                              </div>
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                {inputFieldOptions.map(({ name, label, ...inputProps }) => (
+                {inputFieldOptions.map(({ name, label }) => (
                   <FormField
                     key={name}
                     name={name}
@@ -111,12 +118,9 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ payerAccounts, dict })
                         <FormControl>
                           <Input
                             {...field}
-                            {...inputProps}
                             placeholder=""
                             autoComplete="on"
                             className="text-base"
-                            lang={lang}
-                            disabled={name === "amount" && !form.formState.isDirty}
                             onFocus={(event) => event.target.select()}
                           />
                         </FormControl>
