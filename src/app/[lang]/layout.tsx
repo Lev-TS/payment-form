@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { i18n } from "@/i18n.config";
 
 import { RootLayoutProps } from "./types";
+import { getDictionary } from "@/lib/server.utils";
 
 export const metadata: Metadata = {
   title: "Payment",
@@ -23,14 +24,16 @@ export function generateStaticParams() {
   });
 }
 
-export default function RootLayout({ children, params }: RootLayoutProps) {
+export default async function RootLayout({ children, params }: RootLayoutProps) {
+  const dict = await getDictionary(params.lang);
+
   return (
     <html lang={params.lang} suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="flex h-screen flex-col">
             <header className="sticky top-0 z-50 flex space-x-3 border-b bg-background p-3">
-              <ThemeModeToggle />
+              <ThemeModeToggle dict={dict.layouts.root} />
               <LocaleToggle />
               <Toaster />
             </header>

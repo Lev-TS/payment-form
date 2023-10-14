@@ -28,11 +28,6 @@ export const LocaleToggle = () => {
     router.replace(redirectedPathName(locale));
   };
 
-  const supportedLang: Record<Locale, string> = {
-    en: "English",
-    lt: "Lithuanian",
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -45,7 +40,7 @@ export const LocaleToggle = () => {
           return (
             <div key={idx}>
               <DropdownMenuItem className="gap-3 py-2" onClick={getClickHandler(locale)} key={locale}>
-                <span>{supportedLang[locale]}</span>
+                <span>{i18n.supportedLang[locale]}</span>
               </DropdownMenuItem>
               {idx !== arr.length - 1 ? <Separator /> : null}
             </div>

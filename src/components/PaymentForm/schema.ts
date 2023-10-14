@@ -1,22 +1,23 @@
 import { z } from "zod";
 
-import { parseLocalizedNumber } from "@/lib/utils";
-
 import { GetPaymentFormSchemaFnArgs } from "./types";
 
-export const getPaymentFormSchema = ({ lang, payerAccountsWithPositiveBalance, dict }: GetPaymentFormSchemaFnArgs) =>
+export const getPaymentFormSchema = ({ payerAccountsWithPositiveBalance, dict }: GetPaymentFormSchemaFnArgs) =>
   z
     .object({
       payeeAccount: z
         .string()
-        .min(1, "This field is required")
+        .min(1, dict.requiredField)
         .transform((userInput, context) => {
           const trimmedInput = userInput.trim();
 
+          // To save time, I'm taking a shortcut and validating iban on form submission. Technically,
+          // it's a better user experience to validate it before. That could be achieved with
+          // async validator and debounced input, or with more complex flow.
           if (userInput.length < 15 || userInput.length > 34) {
             context.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Please enter valid IBAN",
+              message: dict.invalidIban,
             });
 
             return z.NEVER;
@@ -26,13 +27,15 @@ export const getPaymentFormSchema = ({ lang, payerAccountsWithPositiveBalance, d
         }),
       amount: z
         .string()
+        .min(1, dict.requiredField)
         .transform((userInput, context) => {
-          const parsedInput = parseLocalizedNumber(userInput);
+          // I'm taking another shortcut here, a production grade app should use more robust number parser.
+          const parsedInput = Number(userInput.replace(" ", "").replace(",", "."));
 
           if (isNaN(parsedInput)) {
             context.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Please enter valid number",
+              message: dict.invalidNumber,
             });
 
             return z.NEVER;
@@ -41,7 +44,7 @@ export const getPaymentFormSchema = ({ lang, payerAccountsWithPositiveBalance, d
           if (parsedInput < 0.01) {
             context.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Minimum payment is: " + (0.01).toLocaleString(lang),
+              message: dict.minPayment,
             });
 
             return z.NEVER;
@@ -49,15 +52,15 @@ export const getPaymentFormSchema = ({ lang, payerAccountsWithPositiveBalance, d
 
           return parsedInput;
         })
-        .or(z.number().min(0.01, "Minimum payment is: " + (0.01).toLocaleString(lang))),
+        .or(z.number().min(0.01, dict.minPayment)),
       purpose: z
         .string()
-        .max(135, { message: "Please shorten (max 135 symbols)" })
+        .max(135, { message: dict.pleaseShorten.replace("%", "135") })
         .transform((userInput, context) => {
           if (userInput.length < 1) {
             context.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "This field is required",
+              message: dict.requiredField,
             });
 
             return z.NEVER;
@@ -66,7 +69,7 @@ export const getPaymentFormSchema = ({ lang, payerAccountsWithPositiveBalance, d
           if (userInput.length < 3) {
             context.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Please provide valid description",
+              message: dict.invalidDescription,
             });
 
             return z.NEVER;
@@ -74,8 +77,8 @@ export const getPaymentFormSchema = ({ lang, payerAccountsWithPositiveBalance, d
 
           return userInput;
         }),
-      payerAccount: z.string().min(1, "This field is required"),
-      payee: z.string().min(1, "This field is required").max(70, "Please shorten (max 70 symbols)"),
+      payerAccount: z.string().min(1, dict.requiredField),
+      payee: z.string().min(1, dict.requiredField).max(70, dict.pleaseShorten.replace("%", "70")),
     })
     .refine(
       (schema) => {
@@ -84,5 +87,5 @@ export const getPaymentFormSchema = ({ lang, payerAccountsWithPositiveBalance, d
         );
         return selectedAccount && selectedAccount.balance >= Number(schema.amount);
       },
-      { message: "Not enough money on your account", path: ["amount"] },
+      { message: dict.insufficientBalance, path: ["amount"] },
     );

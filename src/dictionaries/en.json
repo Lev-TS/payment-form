@@ -1,7 +1,32 @@
 {
   "pages": {
     "home": {
-      "insufficientBalance": "Your accounts are empty"
+      "insufficientBalance": "Insufficient balance",
+      "postSubmitMessage": "You submitted the following values:",
+      "serverError": "Server Error",
+      "payerAccount": "Payer Account",
+      "selectAccount": "Select your account",
+      "account": "Account",
+      "balance": "Balance",
+      "amount": "Amount",
+      "beneficiaryName": "Beneficiary Name",
+      "beneficiaryAccount": "Beneficiary Account",
+      "purpose": "Purpose",
+      "submit": "Submit",
+      "requiredField": "This field is required",
+      "invalidIban": "Please enter valid IBAN",
+      "invalidNumber": "Payment amount is not in valid format",
+      "invalidDescription": "Please enter valid description",
+      "minPayment": "Minimum Payment is: 0.01",
+      "pleaseShorten": "Please shorten (max % symbols)"
+    }
+  },
+  "layouts": {
+    "root": {
+      "toggleTheme": "Toggle Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
     }
   }
 }

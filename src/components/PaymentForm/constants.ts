@@ -1,20 +1,23 @@
+import { HomePageDict } from "./types";
+
 export const FORM_ID = "payment-form";
 
-export const inputFieldOptions = [
-  {
-    name: "amount",
-    label: "Amount",
-  },
-  {
-    name: "payee",
-    label: "Beneficiary Name",
-  },
-  {
-    name: "payeeAccount",
-    label: "Beneficiary Account",
-  },
-  {
-    name: "purpose",
-    label: "Purpose",
-  },
-] as const;
+export const getInputFieldOptions = (dict: HomePageDict) =>
+  [
+    {
+      name: "amount",
+      label: dict.amount,
+    },
+    {
+      name: "payee",
+      label: dict.beneficiaryName,
+    },
+    {
+      name: "payeeAccount",
+      label: dict.beneficiaryAccount,
+    },
+    {
+      name: "purpose",
+      label: dict.purpose,
+    },
+  ] as const;

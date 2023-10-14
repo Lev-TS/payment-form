@@ -5,7 +5,7 @@ import { getDictionary } from "@/lib/server.utils";
 
 import { getPaymentFormSchema } from "./schema";
 
-type Dict = Awaited<ReturnType<typeof getDictionary>>["pages"]["home"];
+export type HomePageDict = Awaited<ReturnType<typeof getDictionary>>["pages"]["home"];
 
 export interface PayerAccount {
   id: string;
@@ -18,13 +18,12 @@ export type PayerAccounts = PayerAccount[];
 export interface PaymentFormProps {
   payerAccountsWithPositiveBalance: PayerAccounts;
   defaultPayerAccount: PayerAccount;
-  dict: Dict;
+  dict: HomePageDict;
 }
 
 export interface GetPaymentFormSchemaFnArgs {
-  lang: Locale;
   payerAccountsWithPositiveBalance: PayerAccounts;
-  dict: Dict;
+  dict: HomePageDict;
 }
 
 export type PaymentFormSchemaType = ReturnType<typeof getPaymentFormSchema>;

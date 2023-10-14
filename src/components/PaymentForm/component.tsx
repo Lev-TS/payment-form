@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { PaymentFormDataType, PaymentFormProps } from "./types";
 import { Card } from "../ui/card";
-import { FORM_ID, inputFieldOptions } from "./constants";
+import { FORM_ID, getInputFieldOptions } from "./constants";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
@@ -25,7 +25,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
 }) => {
   const lang = useLang();
 
-  const PaymentFormSchema = getPaymentFormSchema({ lang, dict, payerAccountsWithPositiveBalance });
+  const PaymentFormSchema = getPaymentFormSchema({ dict, payerAccountsWithPositiveBalance });
 
   const form = useForm<PaymentFormDataType>({
     resolver: zodResolver(PaymentFormSchema),
@@ -39,6 +39,9 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
   });
 
   const onSubmit = async (formData: PaymentFormDataType) => {
+    // To save time, I'm taking a shortcut and validating iban on form submission. Technically,
+    // it's a better user experience to validate it before. That could be achieved with
+    // async validator and debounced input, or with more complex flow.
     const response = await validateIban(formData.payeeAccount);
 
     if (response.error) {
@@ -50,7 +53,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
 
     if (response.data) {
       toast({
-        title: "You submitted the following values:",
+        title: dict.postSubmitMessage,
         description: (
           <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
             <code className="text-white">{JSON.stringify(formData, null, 2)}</code>
@@ -61,7 +64,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
     }
 
     form.setError("root", {
-      message: "Server Error",
+      message: dict.serverError,
     });
   };
 
@@ -81,23 +84,22 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                   name="payerAccount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Payer Account</FormLabel>
+                      <FormLabel className="text-xl font-bold">{dict.payerAccount}</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl className="min-h-[60px]">
                           <SelectTrigger>
-                            <SelectValue placeholder="Select your account" />
+                            <SelectValue placeholder={dict.selectAccount} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {payerAccountsWithPositiveBalance.map((account) => (
                             <SelectItem value={account.iban} key={account.id}>
-                              <div>Account: {account.iban}</div>
-                              <div className="float-left">
-                                Balance:{" "}
-                                {account.balance.toLocaleString(lang, {
+                              <div className="font-semibold">{`${dict.account}: ${account.iban}`}</div>
+                              <div className="float-left font-thin italic">
+                                {`${dict.balance}: ${account.balance.toLocaleString(lang, {
                                   minimumFractionDigits: 2,
                                   maximumFractionDigits: 2,
-                                })}
+                                })}`}
                               </div>
                             </SelectItem>
                           ))}
@@ -107,21 +109,21 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                     </FormItem>
                   )}
                 />
-                {inputFieldOptions.map(({ name, label }) => (
+                {getInputFieldOptions(dict).map(({ name, label }) => (
                   <FormField
                     key={name}
                     name={name}
                     control={form.control}
                     render={({ field }) => (
                       <FormItem className="grow">
-                        <FormLabel>{label}</FormLabel>
+                        <FormLabel className="text-xl font-bold">{label}</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             placeholder=""
-                            autoComplete="on"
                             className="text-base"
                             onFocus={(event) => event.target.select()}
+                            autoComplete={name === "amount" ? "off" : "on"}
                           />
                         </FormControl>
                         <FormMessage />
@@ -139,7 +141,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
           form={FORM_ID}
           disabled={form.formState.isSubmitting}
           isSubmitting={form.formState.isSubmitting}
-          text="Submit"
+          text={dict.submit}
         />
       </div>
     </div>
