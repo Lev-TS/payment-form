@@ -7,7 +7,7 @@ export const i18n = {
   ],
   supportedLang: {
     en: "English",
-    lt: "Lithuanian",
+    lt: "Lietuviškai",
   },
 };
 

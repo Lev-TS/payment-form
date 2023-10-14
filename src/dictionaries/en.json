@@ -31,7 +31,7 @@
   },
   "api": {
     "mataviError": "Server is down, please try again later",
-    "serverError": "Something when wrong on server",
+    "serverError": "Something went wrong on server",
     "invalidIban": "Please enter valid IBAN"
   }
 }
