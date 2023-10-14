@@ -1,12 +1,12 @@
+import { Locale } from "@/i18n.config";
+
 import { ValidateIbanApiResponse } from "./client.utils.types";
 
-export const validateIban = async (iban: string): Promise<ValidateIbanApiResponse> => {
-  const url = `${window.location.origin}/api/${iban}`;
+export const validateIban = async (iban: string, lang: Locale): Promise<ValidateIbanApiResponse> => {
+  // I'm making this request through server because the browser request is blocked by
+  // CORS policy at https://matavi.eu/
+  const url = `${window.location.origin}/${lang}/api/${iban}`;
   const res = await fetch(new Request(url));
 
-  if (res.ok) {
-    return await res.json();
-  } else {
-    throw new Error("Something went wrong on API server!");
-  }
+  return await res.json();
 };

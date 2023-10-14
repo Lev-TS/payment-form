@@ -3,7 +3,7 @@
     "home": {
       "insufficientBalance": "Insufficient balance",
       "postSubmitMessage": "You submitted the following values:",
-      "serverError": "Server Error",
+      "serverError": "Server Error, please try again later",
       "payerAccount": "Payer Account",
       "selectAccount": "Select your account",
       "account": "Account",
@@ -28,5 +28,10 @@
       "dark": "Dark",
       "system": "System"
     }
+  },
+  "api": {
+    "mataviError": "Server is down, please try again later",
+    "serverError": "Something when wrong on server",
+    "invalidIban": "Please enter valid IBAN"
   }
 }

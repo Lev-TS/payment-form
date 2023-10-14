@@ -28,5 +28,10 @@
       "dark": "Dark",
       "system": "System"
     }
+  },
+  "api": {
+    "mataviError": "Server is down, please try again later",
+    "serverError": "Something when wrong on server",
+    "invalidIban": "Please enter valid IBAN"
   }
 }

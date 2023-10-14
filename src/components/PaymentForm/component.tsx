@@ -42,7 +42,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
     // To save time, I'm taking a shortcut and validating iban on form submission. Technically,
     // it's a better user experience to validate it before. That could be achieved with
     // async validator and debounced input, or with more complex flow.
-    const response = await validateIban(formData.payeeAccount);
+    const response = await validateIban(formData.payeeAccount, lang);
 
     if (response.error) {
       form.setError("payeeAccount", {
