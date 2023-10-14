@@ -1,3 +1,7 @@
 {
-  "home": {}
+  "pages": {
+    "home": {
+      "insufficientBalance": "Your accounts are empty"
+    }
+  }
 }

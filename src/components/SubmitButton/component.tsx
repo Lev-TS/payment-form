@@ -2,9 +2,9 @@ import React from "react";
 
 import { cn } from "@/lib/tailwind.utils";
 
-import { Spinner } from "../Spinner/component";
-import { Button } from "../ui/button";
 import type { SubmitButtonProps } from "./types";
+import { Button } from "../ui/button";
+import { Spinner } from "../Spinner/component";
 
 export const SubmitButton: React.FC<SubmitButtonProps> = ({ disabled, isSubmitting, form, text, className }) => {
   return (
