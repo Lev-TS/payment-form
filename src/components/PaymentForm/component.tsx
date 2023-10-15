@@ -74,11 +74,11 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
 
   return (
     <div className="flex h-full flex-col items-stretch">
-      <div className="flex flex-1 flex-col justify-center">
-        <div className="px-6">
+      <div className="flex flex-1 flex-col justify-center ">
+        <div className=" px-3">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} id={FORM_ID} className="m-auto flex max-w-sm flex-col">
-              <Card className="space-y-4 max-sm:border-none max-sm:shadow-none sm:space-y-6 sm:px-6 sm:py-9">
+            <form onSubmit={form.handleSubmit(onSubmit)} id={FORM_ID} className="m-auto flex max-w-sm flex-col ">
+              <Card className="my-10 space-y-4 px-6 py-9 sm:space-y-6">
                 <FormField
                   control={form.control}
                   name="payerAccount"

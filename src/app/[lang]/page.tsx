@@ -1,4 +1,4 @@
-import { PaymentForm } from "@/components/PaymentForm/component";
+import { PaymentForm } from "../../components/PaymentForm/component";
 import { getDictionary } from "@/lib/server.utils";
 import { mockDatabaseQuery } from "@/lib/utils";
 

@@ -37,7 +37,7 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
               <LocaleToggle />
               <Toaster />
             </header>
-            <main className="grow overflow-auto">{children}</main>
+            <main className="grow overflow-auto bg-slate-600/10">{children}</main>
           </div>
         </ThemeProvider>
       </body>
