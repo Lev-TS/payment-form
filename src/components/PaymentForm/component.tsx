@@ -78,7 +78,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
         <div className=" px-3">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} id={FORM_ID} className="m-auto flex max-w-sm flex-col ">
-              <Card className="my-10 space-y-4 px-6 py-9 sm:space-y-6">
+              <Card className="my-6 space-y-4 px-6 py-9 sm:space-y-6">
                 <FormField
                   control={form.control}
                   name="payerAccount"
@@ -121,6 +121,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                           <Input
                             {...field}
                             placeholder=""
+                            type="text"
                             className="text-base"
                             onFocus={(event) => event.target.select()}
                             autoComplete={name === "amount" ? "off" : "on"}
