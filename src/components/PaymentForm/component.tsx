@@ -71,7 +71,11 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
   };
 
   if (form.formState.isSubmitting) {
-    return <Spinner />;
+    return (
+      <div className="absolute right-3 top-4 z-50">
+        <Spinner className="h-6 w-6  border-red-900" />
+      </div>
+    );
   }
 
   return (
