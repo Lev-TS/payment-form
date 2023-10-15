@@ -18,7 +18,9 @@
       "invalidNumber": "Payment amount is not in valid format",
       "invalidDescription": "Please enter valid description",
       "minPayment": "Minimum Payment is: 0.01",
-      "pleaseShorten": "Please shorten (max % symbols)"
+      "pleaseShorten": "Please shorten (max % symbols)",
+      "cardTitle": "Payment Form",
+      "cardDescription": "Enter details to make payment"
     }
   },
   "layouts": {

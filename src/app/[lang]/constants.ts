@@ -14,9 +14,4 @@ export const mockPayerAccountData = [
     id: "3",
     balance: -5.87,
   },
-  {
-    iban: "LT307300010172619163",
-    id: "3",
-    balance: 9000000001.32,
-  },
 ];

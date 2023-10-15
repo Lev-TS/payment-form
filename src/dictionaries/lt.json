@@ -18,7 +18,9 @@
       "invalidNumber": "Mokėjimo suma yra netinkamio formato",
       "invalidDescription": "Prašome įvesti tinkamą aprašymą",
       "minPayment": "Minimalus mokėjimas yra: 0,01",
-      "pleaseShorten": "Prašome sutrumpinti (daugiausia % simbolių)"
+      "pleaseShorten": "Prašome sutrumpinti (daugiausia % simbolių)",
+      "cardTitle": "Mokėjimo forma",
+      "cardDescription": "Pateikite duomenis įvykdyti pavedimą"
     }
   },
   "layouts": {

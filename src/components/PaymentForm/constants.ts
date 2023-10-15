@@ -16,8 +16,4 @@ export const getInputFieldOptions = (dict: HomePageDict) =>
       name: "payeeAccount",
       label: dict.beneficiaryAccount,
     },
-    {
-      name: "purpose",
-      label: dict.purpose,
-    },
   ] as const;

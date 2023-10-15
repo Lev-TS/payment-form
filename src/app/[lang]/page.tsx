@@ -19,10 +19,12 @@ export default async function HomePage({ params }: RootParams) {
   }
 
   return (
-    <PaymentForm
-      defaultPayerAccount={payerAccountsWithPositiveBalance[0]}
-      payerAccountsWithPositiveBalance={payerAccountsWithPositiveBalance}
-      dict={dict.pages.home}
-    />
+    <div className="px-3 py-6">
+      <PaymentForm
+        defaultPayerAccount={payerAccountsWithPositiveBalance[0]}
+        payerAccountsWithPositiveBalance={payerAccountsWithPositiveBalance}
+        dict={dict.pages.home}
+      />
+    </div>
   );
 }

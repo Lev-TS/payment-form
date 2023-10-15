@@ -31,13 +31,13 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
     <html lang={params.lang} suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="flex h-screen flex-col">
+          <div className="flex min-h-screen flex-col">
             <header className="sticky top-0 z-50 flex space-x-3 border-b bg-background p-3">
               <ThemeModeToggle dict={dict.layouts.root} />
               <LocaleToggle />
               <Toaster />
             </header>
-            <main className="grow overflow-auto bg-slate-600/10">{children}</main>
+            <main className="flex-1 overflow-auto bg-slate-600/10">{children}</main>
           </div>
         </ThemeProvider>
       </body>

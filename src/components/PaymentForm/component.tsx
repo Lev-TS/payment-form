@@ -8,15 +8,17 @@ import { validateIban } from "@/lib/client.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { PaymentFormDataType, PaymentFormProps } from "./types";
-import { Card } from "../ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { FORM_ID, getInputFieldOptions } from "./constants";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Spinner } from "../Spinner/component";
-import { SubmitButton } from "../SubmitButton/component";
 import { getPaymentFormSchema } from "./schema";
 import { toast } from "../ui/use-toast";
+import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
+import { Separator } from "../ui/separator";
 
 export const PaymentForm: React.FC<PaymentFormProps> = ({
   defaultPayerAccount,
@@ -73,78 +75,89 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
   }
 
   return (
-    <div className="flex h-full flex-col items-stretch">
-      <div className="flex flex-1 flex-col justify-center ">
-        <div className=" px-3">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} id={FORM_ID} className="m-auto flex max-w-sm flex-col ">
-              <Card className="my-6 space-y-4 px-6 py-9 sm:space-y-6">
+    <div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} id={FORM_ID}>
+          <Card className="m-auto max-w-sm">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl">{dict.cardTitle}</CardTitle>
+              <CardDescription>{dict.cardDescription}</CardDescription>
+            </CardHeader>
+            <Separator className="mb-4" />
+            <CardContent className="grid gap-4">
+              <FormField
+                control={form.control}
+                name="payerAccount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">{dict.payerAccount}</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl className="min-h-[60px]">
+                        <SelectTrigger>
+                          <SelectValue placeholder={dict.selectAccount} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {payerAccountsWithPositiveBalance.map((account) => (
+                          <SelectItem value={account.iban} key={account.id}>
+                            <div className="font-semibold">{`${dict.account}: ${account.iban}`}</div>
+                            <div className="float-left font-thin italic">
+                              {`${dict.balance}: ${account.balance.toLocaleString(lang, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}`}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {getInputFieldOptions(dict).map(({ name, label }) => (
                 <FormField
+                  key={name}
+                  name={name}
                   control={form.control}
-                  name="payerAccount"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xl font-bold">{dict.payerAccount}</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl className="min-h-[60px]">
-                          <SelectTrigger>
-                            <SelectValue placeholder={dict.selectAccount} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {payerAccountsWithPositiveBalance.map((account) => (
-                            <SelectItem value={account.iban} key={account.id}>
-                              <div className="font-semibold">{`${dict.account}: ${account.iban}`}</div>
-                              <div className="float-left font-thin italic">
-                                {`${dict.balance}: ${account.balance.toLocaleString(lang, {
-                                  minimumFractionDigits: 2,
-                                  maximumFractionDigits: 2,
-                                })}`}
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                    <FormItem className="grow">
+                      <FormLabel className="font-bold">{label}</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder=""
+                          type="text"
+                          className="text-base"
+                          onFocus={(event) => event.target.select()}
+                          autoComplete={name === "amount" ? "off" : "on"}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                {getInputFieldOptions(dict).map(({ name, label }) => (
-                  <FormField
-                    key={name}
-                    name={name}
-                    control={form.control}
-                    render={({ field }) => (
-                      <FormItem className="grow">
-                        <FormLabel className="text-xl font-bold">{label}</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder=""
-                            type="text"
-                            className="text-base"
-                            onFocus={(event) => event.target.select()}
-                            autoComplete={name === "amount" ? "off" : "on"}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ))}
-              </Card>
-            </form>
-          </Form>
-        </div>
-      </div>
-      <div className="border-t bg-background p-3">
-        <SubmitButton
-          form={FORM_ID}
-          disabled={form.formState.isSubmitting}
-          isSubmitting={form.formState.isSubmitting}
-          text={dict.submit}
-        />
-      </div>
+              ))}
+              <FormField
+                name="purpose"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="grow">
+                    <FormLabel className="font-bold">{dict.purpose}</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} placeholder="" onFocus={(event) => event.target.select()} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full">{dict.submit}</Button>
+            </CardFooter>
+          </Card>
+        </form>
+      </Form>
     </div>
   );
 };
